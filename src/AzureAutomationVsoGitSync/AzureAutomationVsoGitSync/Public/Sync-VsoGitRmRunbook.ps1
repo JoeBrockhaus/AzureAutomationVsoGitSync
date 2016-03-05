@@ -65,7 +65,7 @@
 			-TargetAutomationAccount "AccountName" -AzureConnectionName "ConnectionAssetName" -VSOBranch "master"
 
 	.NOTES
-		AUTHOR: Joe Brockhaus (original: System Center Automation Team)
+		AUTHOR: Joe Brockhaus (original: System Center Automation Team https://gallery.technet.microsoft.com/scriptcenter/Sync-runbooks-from-Visual-b1186286)
 		LASTEDIT: 
 	#>
 
