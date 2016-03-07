@@ -235,16 +235,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # MatR edits
-bower_components/
 logs/
 LogFiles/
-src/Rackspace.Microsoft.Azure.Portal/**/*.js
-!src/Rackspace.Microsoft.Azure.Portal/BuildScripts/*.js
-!src/Rackspace.Microsoft.Azure.Portal/vendor-bundle.js
-!src/Rackspace.Microsoft.Azure.Portal/gulpfile.js
-src/Rackspace.Microsoft.Azure.Portal/**/*.js.map
-src/Rackspace.Microsoft.Azure.Portal/www/dist/
-src/Rackspace.Microsoft.Azure.Portal/templates.js
-src/Rackspace.Microsoft.Azure.Portal/main.js
 .vs/
-/src/Rackspace.Microsoft.Azure.Portal.Data/Providers/Azure/GenericResourceExtended.cs
