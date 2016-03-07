@@ -31,12 +31,12 @@ foreach ($mod in $mods) {
 	if ($loadLib)
 	{
 		Write-Host "`t$modName... " 
-		Write-Host "`t`t|-lib\"
+		Write-Host "`t\lib\"
 		$libPath = "$($mod.dir)\lib\"
 		md "$libPath" -Force | Out-Null
 		foreach($dll in $mod.dllDepends)
 		{
-			Write-Host "`t`t|`t$dll... " -NoNewline
+			Write-Host "`t`t$dll... " -NoNewline
 			Copy-Item $dll $libPath 
 			Write-Host "Done."
 		}

@@ -21,6 +21,18 @@ namespace AzureAutomationVsoGitSync.Models
             return rValue;
         }
 
+        public Runbook Find(string name)
+        {
+            return this._runbooks.ContainsKey(name)
+                ? this._runbooks[name]
+                : null;
+        }
+        public Runbook FindByUrl(string url)
+        {
+            return this._runbooks
+                .FirstOrDefault(x => x.Value.FileUrl.Equals(url, StringComparison.InvariantCultureIgnoreCase))
+                .Value;
+        }
         public Runbook this[string key] { get { return this._runbooks[key]; } }
 
         public IEnumerable<Runbook> Result
