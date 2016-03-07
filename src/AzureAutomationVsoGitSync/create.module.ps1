@@ -8,7 +8,7 @@ $outMod = "$($outDir)_Module\"
 # delete any existing module output
 Remove-Item "$outMod\*.*" -Recurse -Force
 # force-create directory
-#New-Item $outMod -ItemType Directory -Force
+New-Item $outMod -ItemType Directory -Force | Out-Null
 
 $mods = @(
 	@{ 
