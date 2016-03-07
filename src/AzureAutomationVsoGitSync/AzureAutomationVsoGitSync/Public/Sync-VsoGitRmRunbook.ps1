@@ -9,8 +9,8 @@
 		treat all sub directories within the VSORunbookFolderPath as dependent (child) runbooks and publish these 
 		first
 
-		With the -FlatFilesMode parameter, syncs all runbooks in a VSO git repository to an Azure Automation 
-		Account, by building a dependency graph, sorting by those dependencies, and publishing bottom-up.
+		With the -FlatFilesMode parameter, syncs all runbooks in the specified folder in a VSO git repository to 
+		an Azure Automation Account by building a dependency graph and publishing bottom-up.
     
 		Requires a VSO Alternate Authentication Credential for connecting with VSO-Git repository, stored 
 		in a Automation credential asset.
@@ -60,13 +60,10 @@
 		6. If errors occured and no runbooks are synced in a given try, the process gives up, assuming the issue is not a parent/child dependency.
 
 	.EXAMPLE
-		VsoGitRmRunbook -VSOCredentialName "VSOCredentialAsset" -VSOAccount "AccountName" 
+		Sync-VsoGitRmRunbook -VSOCredentialName "VSOCredentialAsset" -VSOAccount "AccountName" 
 			-VSOProject "Project" -VSORepository "Repository" -VSORunbookFolderPath "/Project1/ProjectRoot" 
 			-TargetAutomationAccount "AccountName" -AzureConnectionName "ConnectionAssetName" -VSOBranch "master"
 
-	.NOTES
-		AUTHOR: Joe Brockhaus (original: System Center Automation Team https://gallery.technet.microsoft.com/scriptcenter/Sync-runbooks-from-Visual-b1186286)
-		LASTEDIT: 
 	#>
 
 	function Sync-VsoGitRmRunbook
@@ -101,29 +98,16 @@
 		   [string] $TargetCredentialName,
 
 		   [Parameter(Mandatory=$False)]
-		   [string] $VSOBranch = "master",
+		   [string] $VSOBranch,
 
 		   [Parameter(Mandatory=$False)]
 		   [bool] $FlatFilesMode = $true
 		)
-    
-		function Add-SortRunbookTypes()
-		{
-			if ((Get-Module "") -eq $null)
-			{
-				Write-Verbose "Importing ..." 
-				$VerbosePreference = "SilentlyContinue"
-				$VerbosePreference = "Continue" 
-			}
-		}
 
 		$psExtension = ".ps1"
 		$grExtension = ".graphrunbook"
 		$vsoApiVersion = "1.0-preview"
-
-		$azCred = Get-AutomationPSCredential -Name "az-mscloud-creds" 
-		$azAcct = Add-AzureRmAccount -Credential $azCred -SubscriptionId $TargetSubscriptionId
-    	
+		    	
 		#Getting Credentail asset for VSO alternate authentication credentail
 		$VSOCred = Get-AutomationPSCredential -Name $VSOCredentialName
 		if ($VSOCred -eq $null)
@@ -146,15 +130,11 @@
 				"&api-version=" + $vsoApiVersion
 		Write-Verbose("Connecting to VSO using URL: $VSOURL")
 		$results = Invoke-RestMethod -Uri $VSOURL -Method Get -Headers $headers
-    
-        
+
 		$VerbosePreference = "Continue"
 		#$results | ConvertTo-Json | Write-Verbose
-    
 
-		Add-SortRunbookTypes
 		$allRunbooks = [AzureAutomationVsoGitSync.Models.SortedRunbookDictionary]@{}
-
 
 		#grab folders & files
 		$folderObj = @()
@@ -173,26 +153,27 @@
 				# local temp path for runbook
 				$tempPath = Join-Path -Path $env:SystemDrive -ChildPath "temp"
 				$outFile = Join-Path -Path $tempPath -ChildPath $fileName
-            
+
 				# download the runbook
 				$fileUrl = $item.url
- 				Write-Verbose "`tGET $fileName"
+				Write-Verbose "`tGET $fileName"
 				$VerbosePreference = "SilentlyContinue"
-				Invoke-RestMethod -Uri $fileUrl -Method Get -Headers $headers -OutFile $outFile 
+				Invoke-RestMethod -Uri $fileUrl -Method Get -Headers $headers -OutFile $outFile S
 				$VerbosePreference = "Continue"
-            
+
 				$new = $allRunbooks.Add($outFile, $fileUrl)
 
 			}
 		}
-   
+
 		# Select the Azure Subscription
-		#Select-AzureSubscription -SubscriptionId $Using:TargetSubscriptionId
-		Select-AzureRmSubscription -SubscriptionId $Using:TargetSubscriptionId
+		$azCred = Get-AutomationPSCredential -Name $TargetCredentialName
+		$azAcct = Add-AzureRmAccount -Credential $azCred -SubscriptionId $TargetSubscriptionId
+		$azSub = Select-AzureRmSubscription -SubscriptionId $TargetSubscriptionId
 
 		# enumerate existing automation accounts & runbooks
-		#Get-AzureRmAutomationAccount -ResourceGroupName $Using:TargetResourceGroup | ConvertTo-Json | Write-Verbose
-		#Get-AzureRmAutomationRunbook -ResourceGroupName $Using:TargetResourceGroup -AutomationAccountName $Using:TargetAutomationAccount | ConvertTo-Json | Write-Verbose 
+		#Get-AzureRmAutomationAccount -ResourceGroupName $TargetResourceGroup | ConvertTo-Json | Write-Verbose
+		#Get-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount | ConvertTo-Json | Write-Verbose 
 
 		if ($FlatFilesMode)
 		{
@@ -208,10 +189,10 @@
 				$errorSync = @{}
 
 				Write-Verbose "Publish Order (by dependency):"
-				$results = $Using:allRunbooks.Result
-				$results | Select Name | ConvertTo-Json | Write-Verbose
+				$sorted = $allRunbooks.Result
+				$sorted | Select Name | ConvertTo-Json | Write-Verbose
 
-				foreach($rb in $results)
+				foreach($rb in $sorted)
 				{
 					$outFile = $rb.FilePath
 					$runbookName = $rb.Name
@@ -221,29 +202,29 @@
 					{
 						# if not yet synced .. import & add to synced collection
 						if (!$haveSynced.ContainsKey($runbookName))
-						{ 					
+						{
 							if ($rbType -eq [RunbookType]::Graph)
 							{
 								Write-Verbose  "Importing $runbookName as Graph."
-								Import-AzureRmAutomationRunbook -ResourceGroupName $Using:TargetResourceGroup -AutomationAccountName $Using:TargetAutomationAccount -Path $outFile -Force -Published -Type Graph 
+								Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type Graph 
 							}
 							elseif ($rbType -eq [RunbookType]::PowerShellWorkflow)
 							{                                
 								Write-Verbose  "Importing $runbookName as PowerShellWorkflow."
-								Import-AzureRmAutomationRunbook -ResourceGroupName $Using:TargetResourceGroup -AutomationAccountName $Using:TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShellWorkflow 
+								Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShellWorkflow 
 							}
 							elseif ($rbType -eq [RunbookType]::PowerShell)
 							{
 								Write-Verbose  "Importing $runbookName as PowerShell."
-								Import-AzureRmAutomationRunbook -ResourceGroupName $Using:TargetResourceGroup -AutomationAccountName $Using:TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShell 
+								Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShell 
 							}
 							else
 							{
-								throw "Could not determine type from: $rbType"
+								throw "Could not determine type of runbook $($rb.FileName) from $rbType"
 							}
                             
 							#Write-Verbose "Publishing.."
-							#$rb = Publish-AzureRmAutomationRunbook -ResourceGroupName $Using:TargetResourceGroup -AutomationAccountName $Using:TargetAutomationAccount -Name $runbookName -ErrorAction Continue | Write-Verbose
+							#$rb = Publish-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Name $runbookName -ErrorAction Continue | Write-Verbose
                         
 							$haveSynced.Add($runbookName, $rb.FileUrl)
 						}
@@ -266,7 +247,7 @@
 
 				Write-Verbose "Done.`n"
                 
-				Write-Verbose "Synced $($haveSynced.Count) of $($results.Count)"
+				Write-Verbose "Synced $($haveSynced.Count) of $($sorted.Count)"
 				#Write-Verbose "Errors $($errorSync.Count)"
 
 				if ($errorSync.Count > 0)
@@ -275,7 +256,7 @@
 					$errorSync | ConvertTo-Json | Write-Verbose
 				}
 
-				if ($haveSynced.Count -eq $results.Count)
+				if ($haveSynced.Count -eq $sorted.Count)
 				{
 					Write-Verbose "All runbooks synced."
 				}
@@ -284,6 +265,9 @@
 		}
 		else
 		{
+			$haveSynced = @{}
+			$errorSync = @{}
+
 			#recursively go through most inner child folders first, then their parents, parents parents, etc.
 			for ($i = $folderObj.count - 1; $i -ge 0; $i--)
 			{
@@ -293,61 +277,81 @@
 						"&recursionLevel=OneLevel&includecontentmetadata=true&versionType=branch&version=" + 
 						$VSOBranch + "&api-version=" + $vsoApiVersion
  
- 				Write-Verbose "GET $folderURL"               
 				$results = Invoke-RestMethod -Uri $folderURL -Method Get -Headers $headers
         
 				foreach ($item in $results.value)
 				{
-					if (($item.gitObjectType -eq "blob") -and ($item.path -match $psExtension -or $item.path -match $grExtension))
+					try 
 					{
 						$pathsplit = $item.path.Split("/")
 						$filename = $pathsplit[$pathsplit.Count - 1]
 						$tempPath = Join-Path -Path $env:SystemDrive -ChildPath "temp"
 						$outFile = Join-Path -Path $tempPath -ChildPath $filename
  
- 						#Write-Verbose "GET $($item.url)"               
-						#Invoke-RestMethod -Uri $item.url -Method Get -Headers $headers -OutFile $outFile
+						#Get the runbook name
+						$fname = $filename
+						$tempPathSplit = $fname.Split(".")
+						$runbookName = $tempPathSplit[0]
+						$rbType = $rb.Type
         
-						#InlineScript 
-						#{ 
-							# shouldn't need to do this every iteration
-							# Select the Azure Subscription
-							# Select-AzureSubscription -SubscriptionId $Using:TargetSubscriptionId
-					                
-							#Get the runbook name
-							$fname = $Using:filename
-							$tempPathSplit = $fname.Split(".")
-							$runbookName = $tempPathSplit[0]
-        
-							#Import ps1 files into Automation, create one if doesn't exist
-							Write-Verbose("Importing runbook $runbookName into Automation Account")
-					
-							if ($fname -match $Using:grExtension)
+						# if not yet synced .. import & add to synced collection
+						if (!$haveSynced.ContainsKey($runbookName))
+						{
+							if ($rbType -eq [RunbookType]::Graph)
 							{
-								Write-Verbose $fname
-								Write-Verbose  "Importing & Publishing as Graph."
-								Import-AzureRmAutomationRunbook -ResourceGroupName $Using:TargetResourceGroup -AutomationAccountName $Using:TargetAutomationAccount -Path $Using:outFile -Type Graph -Published -Force 
+								Write-Verbose  "Importing $runbookName as Graph."
+								Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type Graph 
 							}
-							else 
+							elseif ($rbType -eq [RunbookType]::PowerShellWorkflow)
+							{                                
+								Write-Verbose  "Importing $runbookName as PowerShellWorkflow."
+								Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShellWorkflow 
+							}
+							elseif ($rbType -eq [RunbookType]::PowerShell)
 							{
-								Write-Verbose "Determining Runbook Type..."
-
-								$file = Get-Content $Using:outFile
-								$isWorkflow = $file | %{$_ -match "workflow(\s+)$runbookName"}
-								if ($isWorkflow -contains $true)
-								{
-									Write-Verbose  "Importing & Publishing as PowerShellWorkflow."
-									Import-AzureRmAutomationRunbook -ResourceGroupName $Using:TargetResourceGroup -AutomationAccountName $Using:TargetAutomationAccount -Path $Using:outFile -Type PowerShellWorkflow -Published -Force -ErrorAction Continue
-								}
-								else
-								{
-									Write-Verbose  "Importing & Publishing as PowerShell."
-									Import-AzureRmAutomationRunbook -ResourceGroupName $Using:TargetResourceGroup -AutomationAccountName $Using:TargetAutomationAccount -Path $Using:outFile -Type PowerShell -Published -Force -ErrorAction Continue
-								}
+								Write-Verbose  "Importing $runbookName as PowerShell."
+								Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShell 
 							}
-						#}
+							else
+							{
+								throw "Could not determine type of runbook $($rb.FileName) from $rbType"
+							}
+						
+							$haveSynced.Add($runbookName, $rb.FileUrl)
+						}
+						else
+						{
+							Write-Verbose("Runbook $runbookName already synced. Duplicate?")
+						}
 					}
+					catch [System.Exception] 
+					{
+						$ex = ConvertTo-Json $_
+						if (!$errorSync.ContainsKey($runbookName))
+						{
+							$errorsync.add( $runbookname, $ex )
+						}
+						Write-Verbose $ex
+						Write-Error $_
+					}
+					
 				}
+			}
+
+			
+			Write-Verbose "Done.`n"
+                
+			Write-Verbose "Synced $($haveSynced.Count) of $($allRunbooks.Results.Count)"
+
+			if ($errorSync.Count > 0)
+			{
+				Write-Verbose "Errors:"
+				$errorSync | ConvertTo-Json | Write-Verbose
+			}
+
+			if ($haveSynced.Count -eq $results.Count)
+			{
+				Write-Verbose "All runbooks synced."
 			}
 		}
 	}

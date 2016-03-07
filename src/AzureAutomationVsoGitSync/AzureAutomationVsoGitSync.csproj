@@ -11,6 +11,7 @@
     <AssemblyName>AzureAutomationVsoGitSync</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,12 +67,10 @@
     <Content Include="AzureAutomationVsoGitSync\AzureAutomationVsoGitSync.psm1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRmRunbookWF.ps1">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRmRunbook.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRunbook.ps1" />
     <None Include="lib\Orchestrator.GraphRunbook.Model.dll" />
     <None Include="create.module.ps1" />
     <None Include="packages.config" />
