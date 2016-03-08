@@ -54,7 +54,7 @@
     <Compile Include="Models\RunbookReference.cs" />
     <Compile Include="Models\RunbookTypeEnum.cs" />
     <Compile Include="Models\SortedRunbookDictionary.cs" />
-    <Compile Include="TopologicalSortExtensions.cs" />
+    <Compile Include="Extensions\TopologicalSortExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AzureAutomationVsoGitSync\lib\" />
@@ -67,10 +67,10 @@
     <Content Include="AzureAutomationVsoGitSync\AzureAutomationVsoGitSync.psm1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRmRunbook.ps1">
+    <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRmRunbooks.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRunbook.ps1">
+    <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRunbooks.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="lib\Orchestrator.GraphRunbook.Model.dll" />

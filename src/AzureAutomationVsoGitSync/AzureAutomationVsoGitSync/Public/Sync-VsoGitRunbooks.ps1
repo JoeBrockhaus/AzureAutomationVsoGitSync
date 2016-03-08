@@ -49,8 +49,9 @@
 			-AutomationAccount "AccountName" -AzureConnectionName "ConnectionAssetName" -VSOBranch "master"
 
 	#>
-	function Sync-VsoGitRunbook
+	function Sync-VsoGitRunbooks
 	{
+		[CmdletBinding()]	
 		param (
 			   [Parameter(Mandatory=$True)]
 			   [string] $VSOCredentialName,
