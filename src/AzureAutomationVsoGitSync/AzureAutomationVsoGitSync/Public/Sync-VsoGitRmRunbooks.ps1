@@ -66,7 +66,7 @@
 
 	#>
 
-	function Sync-VsoGitRmRunbook
+	function Sync-VsoGitRmRunbooks
 	{
 		[CmdletBinding()]	
 		param (
@@ -158,18 +158,20 @@
 				$fileUrl = $item.url
 				Write-Verbose "`tGET $fileName"
 				$VerbosePreference = "SilentlyContinue"
-				Invoke-RestMethod -Uri $fileUrl -Method Get -Headers $headers -OutFile $outFile S
+				Invoke-RestMethod -Uri $fileUrl -Method Get -Headers $headers -OutFile $outFile 
 				$VerbosePreference = "Continue"
 
 				$new = $allRunbooks.Add($outFile, $fileUrl)
 
 			}
 		}
-
+		
+		$VerbosePreference = "SilentlyContinue"
 		# Select the Azure Subscription
 		$azCred = Get-AutomationPSCredential -Name $TargetCredentialName
 		$azAcct = Add-AzureRmAccount -Credential $azCred -SubscriptionId $TargetSubscriptionId
 		$azSub = Select-AzureRmSubscription -SubscriptionId $TargetSubscriptionId
+		$VerbosePreference = "Continue"
 
 		# enumerate existing automation accounts & runbooks
 		#Get-AzureRmAutomationAccount -ResourceGroupName $TargetResourceGroup | ConvertTo-Json | Write-Verbose
@@ -194,6 +196,8 @@
 
 				foreach($rb in $sorted)
 				{
+					Write-Verbose "inside loop"
+					Write-Verbose $rb
 					$outFile = $rb.FilePath
 					$runbookName = $rb.Name
 					$rbType = $rb.Type
@@ -203,6 +207,7 @@
 						# if not yet synced .. import & add to synced collection
 						if (!$haveSynced.ContainsKey($runbookName))
 						{
+							Write-Verbose "Not yet synced"
 							if ($rbType -eq [RunbookType]::Graph)
 							{
 								Write-Verbose  "Importing $runbookName as Graph."
