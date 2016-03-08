@@ -70,7 +70,9 @@
     <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRmRunbook.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRunbook.ps1" />
+    <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRunbook.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="lib\Orchestrator.GraphRunbook.Model.dll" />
     <None Include="create.module.ps1" />
     <None Include="packages.config" />

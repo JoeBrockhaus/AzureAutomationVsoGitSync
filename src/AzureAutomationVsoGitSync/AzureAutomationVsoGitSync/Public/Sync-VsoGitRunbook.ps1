@@ -76,7 +76,7 @@
 			   [Parameter(Mandatory=$True)]
 			   [string] $TargetCredentialName,
 
-			   [Parameter(Mandatory=$False)]
+			   [Parameter(Mandatory=$True)]
 			   [string] $VSOBranch 
 		)
     
