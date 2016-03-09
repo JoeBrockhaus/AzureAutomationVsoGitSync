@@ -70,12 +70,14 @@
     <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRmRunbooks.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitRunbooks.ps1">
+    <Content Include="AzureAutomationVsoGitSync\Public\Sync-VsoGitSmRunbooks.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="lib\Orchestrator.GraphRunbook.Model.dll" />
     <None Include="create.module.ps1" />
     <None Include="packages.config" />
+    <None Include="Samples\Sync-AzureSMRunbooks.ps1" />
+    <None Include="Samples\Sync-AzureRMRunbooks.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
