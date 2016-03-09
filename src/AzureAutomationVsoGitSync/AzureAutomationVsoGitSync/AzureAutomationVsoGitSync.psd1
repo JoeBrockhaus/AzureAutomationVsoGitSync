@@ -5,7 +5,7 @@
 	RootModule = '.\AzureAutomationVsoGitSync.psm1'
 
 	# Version number of this module.
-	ModuleVersion = '1.2'
+	ModuleVersion = '1.2.1'
 
 	# ID used to uniquely identify this module
 	GUID = 'D5199F4F-855E-465A-9256-519BEFBFC970'

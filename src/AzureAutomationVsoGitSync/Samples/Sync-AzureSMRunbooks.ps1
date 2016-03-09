@@ -21,7 +21,7 @@
 
 		[Parameter(Mandatory=$True)]
 		[string] $TargetCredentialName,
-	   
+
 		[Parameter(Mandatory=$True)]
 		[string] $TargetSubscriptionId,
 
@@ -34,18 +34,18 @@
 		[Parameter(Mandatory=$False)]
 		[object]$WebhookData
 	)
-		
+
 	$VerbosePreference = "Continue" 
-			
+
 	# If runbook was called from Webhook, WebhookData will not be null.
 	if ($WebhookData -ne $null) 
 	{	
-	    # Collect properties of WebhookData
-	    $WebhookName    =   $WebhookData.WebhookName
-	    $WebhookHeaders =   $WebhookData.RequestHeader
-	    $WebhookBody    =   $WebhookData.RequestBody
+		# Collect properties of WebhookData
+		$WebhookName    =   $WebhookData.WebhookName
+		$WebhookHeaders =   $WebhookData.RequestHeader
+		$WebhookBody    =   $WebhookData.RequestBody
 	}
-    
+
 	if ((Get-Module "AzureAutomationVsoGitSync") -eq $null)
 	{
 		Write-Verbose "Importing AzureAutomationVsoGitSync..." 
@@ -53,8 +53,8 @@
 		Import-Module "AzureAutomationVsoGitSync"
 		$VerbosePreference = "Continue" 
 	}
-		
-    $PSBoundParameters.FlatFilesMode = $FlatFilesMode
+
+	$PSBoundParameters.FlatFilesMode = $FlatFilesMode
 	if($PSBoundParameters.ContainsKey("WebhookData")){ $PSBoundParameters.Remove("WebhookData") }
-    $PSBoundParameters | ConvertTo-Json | Write-Verbose
+	$PSBoundParameters | ConvertTo-Json | Write-Verbose
 	Sync-VsoGitSmRunbooks @PSBoundParameters
