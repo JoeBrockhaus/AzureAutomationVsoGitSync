@@ -166,8 +166,8 @@
 			}
 		}
 		
-		$VerbosePreference = "SilentlyContinue"
 		# Select the Azure Subscription
+		$VerbosePreference = "SilentlyContinue"
 		$azCred = Get-AutomationPSCredential -Name $TargetCredentialName
 		$azAcct = Add-AzureRmAccount -Credential $azCred -SubscriptionId $TargetSubscriptionId
 		$azSub = Select-AzureRmSubscription -SubscriptionId $TargetSubscriptionId
@@ -180,30 +180,29 @@
 		if ($FlatFilesMode)
 		{
 			$sysDrive = $env:SystemDrive
-			#InlineScript
-			#{ 
 			
 			# [SortedRunbookCollection].Result will be the topologically-sorted list of runbooks
 			# (Leaf nodes first)
             
-				$vsoApiVersion = $true
+			$vsoApiVersion = $true
 
-				$haveSynced = @{}
-				$errorSync = @{}
+			$haveSynced = @{}
+			$errorSync = @{}
 
-				Write-Verbose "Publish Order (by dependency):"
-				$sorted = $allRunbooks.Result
-				$sorted | Select Name | ConvertTo-Json | Write-Verbose
+			Write-Verbose "Publish Order (by dependency):"
+			$sorted = $allRunbooks.Result
+			$sorted | Select Name | ConvertTo-Json | Write-Verbose
 
-				foreach($rb in $sorted)
-				{
-					Write-Verbose "inside loop"
-					Write-Verbose $rb
-					$outFile = $rb.FilePath
-					$runbookName = $rb.Name
-					$rbType = $rb.Type
+			foreach($rb in $sorted)
+			{
+				$outFile = $rb.FilePath
+				$runbookName = $rb.Name
+				$rbType = $rb.Type
                 
-					try 
+				try 
+				{
+					# if not yet synced .. import & add to synced collection
+					if (!$haveSynced.ContainsKey($runbookName))
 					{
 						# if not yet synced .. import & add to synced collection
 						if (!$haveSynced.ContainsKey($runbookName))
@@ -253,21 +252,20 @@
 
 				Write-Verbose "Done.`n"
                 
-				Write-Verbose "Synced $($haveSynced.Count) of $($sorted.Count)"
-				#Write-Verbose "Errors $($errorSync.Count)"
+			Write-Verbose "Synced $($haveSynced.Count) of $($sorted.Count)"
+			#Write-Verbose "Errors $($errorSync.Count)"
 
-				if ($errorSync.Count > 0)
-				{
-					Write-Verbose "Errors:"
-					$errorSync | ConvertTo-Json | Write-Verbose
-				}
+			if ($errorSync.Count > 0)
+			{
+				Write-Verbose "Errors:"
+				$errorSync | ConvertTo-Json | Write-Verbose
+			}
 
-				if ($haveSynced.Count -eq $sorted.Count)
-				{
-					Write-Verbose "All runbooks synced."
-				}
+			if ($haveSynced.Count -eq $sorted.Count)
+			{
+				Write-Verbose "All runbooks synced."
+			}
 
-			#} -ErrorAction Stop
 		}
 		else
 		{

@@ -143,9 +143,11 @@
 		}
 	
 		# Select the Azure Subscription
+		$VerbosePreference = "SilentlyContinue"
 		$azCred = Get-AutomationPSCredential -Name $TargetCredentialName
 		$azAcct = Add-AzureAccount -Credential $azCred
 		$azSub = Select-AzureSubscription -SubscriptionId $TargetSubscriptionId
+		$VerbosePreference = "Continue"
 
 		#recursively go through most inner child folders first, then their parents, grand-parents, etc.
 		for ($i = $folderObj.count - 1; $i -ge 0; $i--)
