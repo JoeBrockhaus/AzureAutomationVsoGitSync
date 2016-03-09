@@ -1,8 +1,5 @@
 # AzureAutomationVsoGitSync
-AzureAutomationVsoGitSync is a tool to make Continuous Delivery of the Azure Automation runbooks from VSO-Git as straightforward as possible.
-All runbooks from the specified folder in a VSO-Git repository to an existing Azure Automation Account. 
-Once the Runbooks are downloaded from the repository, they are inspected for references to other Runbooks from the set being synced.
-The Runbooks are then topologically sorted by those dependencies and published in that order.   
+AzureAutomationVsoGitSync is a tool to make Continuous Delivery of the Azure Automation runbooks from VSO-Git as straightforward as possible. Once the Runbooks are downloaded from the repository, they are inspected for references to other Runbooks from the set being synced. The Runbooks are then topologically sorted by those dependencies and published in that order. 
 
 This tool was inspired by the lack of well-rounded official tooling & the shortcomings of Sync-VsoGitRunbook (which I don't think was ever actually completed). 
 Unlike the latter, this tool avoids the issue of having to use obtuse folder structures and needing to manually manage dependencies. 
