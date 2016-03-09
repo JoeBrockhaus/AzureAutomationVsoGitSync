@@ -8,8 +8,8 @@ namespace AzureAutomationVsoGitSync.Models
 {
     public class RunbookReference
     {
-        private SortedRunbookDictionary _allRunbooks;
-        public RunbookReference(SortedRunbookDictionary allRunbooks, Runbook sourceRunbook, string runbookName, int lineNumber, string lineContent)
+        private SortedRunbookCollection _allRunbooks;
+        public RunbookReference(SortedRunbookCollection allRunbooks, Runbook sourceRunbook, string runbookName, int lineNumber, string lineContent)
         {
             this._allRunbooks = allRunbooks;
             this.SourceRunbook = sourceRunbook;
@@ -28,7 +28,7 @@ namespace AzureAutomationVsoGitSync.Models
         }
 
         public Runbook SourceRunbook { get; private set; }
-        public Runbook TargetRunbook { get { return this._allRunbooks[this.TargetRunbookName]; } }
+        public Runbook TargetRunbook { get { return this._allRunbooks.Find(this.TargetRunbookName); } }
 
     }
 

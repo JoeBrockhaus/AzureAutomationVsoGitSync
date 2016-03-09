@@ -53,7 +53,7 @@
     <Compile Include="Models\Runbook.cs" />
     <Compile Include="Models\RunbookReference.cs" />
     <Compile Include="Models\RunbookTypeEnum.cs" />
-    <Compile Include="Models\SortedRunbookDictionary.cs" />
+    <Compile Include="Models\SortedRunbookCollection.cs" />
     <Compile Include="Extensions\TopologicalSortExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

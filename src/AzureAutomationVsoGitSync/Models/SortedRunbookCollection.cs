@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AzureAutomationVsoGitSync.Models
 {
-    public class SortedRunbookDictionary
+    public class SortedRunbookCollection
     {
         private Dictionary<string, Runbook> _runbooks = new Dictionary<string, Runbook>();
 
@@ -17,23 +17,22 @@ namespace AzureAutomationVsoGitSync.Models
         public Runbook Add(string filePath, string fileUrl)
         {
             var rValue = new Runbook(this, filePath, fileUrl);
-            this._runbooks.Add(rValue.Name, rValue);
+            this._runbooks.Add(rValue.Name.ToLowerInvariant(), rValue);
             return rValue;
         }
 
         public Runbook Find(string name)
         {
-            return this._runbooks.ContainsKey(name)
-                ? this._runbooks[name]
+            return this._runbooks.ContainsKey(name.ToLowerInvariant())
+                ? this._runbooks[name.ToLowerInvariant()]
                 : null;
         }
         public Runbook FindByUrl(string url)
         {
             return this._runbooks
-                .FirstOrDefault(x => x.Value.FileUrl.Equals(url, StringComparison.InvariantCultureIgnoreCase))
+                .FirstOrDefault(x => string.Equals(x.Value.FileUrl, url, StringComparison.InvariantCultureIgnoreCase))
                 .Value;
         }
-        public Runbook this[string key] { get { return this._runbooks[key]; } }
 
         public IEnumerable<Runbook> Result
         {
