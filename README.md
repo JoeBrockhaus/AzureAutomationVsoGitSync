@@ -9,16 +9,16 @@ Unlike the latter, this tool avoids the issue of having to use obtuse folder str
 Avoiding that folder structure also allows you to use the Azure Automation PowerShell ISE Add-On for development and testing, as well as managing the rest of the Assets that the Add-On supports.
 Ideally this tool could evolve to publish those assets, and more, as well.
 
-#Basics
+##Basics
 
-## There are 4 main components
+### There are 4 main components
 1. C# Models & Assembly
 2. PowerShell cmdlets for deploying to both ASM & ARM Automation Accounts
 3. PowerShell Module containing the assembly & cmdlets.
 4. Sample PowerShell runbook to invoke the tool. 
 
 
-## Requirements
+### Requirements
 1. VSO Git repository containing Azure Automation runbooks (.ps1 or .graphrunbook).
 2. VSO Alternate Authentication Credential for connecting to VSO-Git repository, configured from VSO dashboard (from "My Profile"). 
 3. Automation Credential Asset containing the VSO Alternate Credentials.
@@ -26,14 +26,14 @@ Ideally this tool could evolve to publish those assets, and more, as well.
 5. Azure User Credential for publishing to the target Automation Account.
 6. Automation Credential Asset containing Azure User Credential. 
 
-## Samples
+### Samples
 1. Sync-AzureRMRunbooks.ps1
     - Syncs runbooks to a v2 Automation Account 
 2. Sync-AzureSMRunbooks.ps1
     - Syncs runbooks to a v1 Automation Account
 <br>
     
-# Configuring Integration - Webhooks
+## Configuring Integration - Webhooks
 
 ### VSO Steps
 1. Your runbook will need to be invoked when events occur in VSO. For instance: On Code Pushed 
@@ -58,7 +58,7 @@ Ideally this tool could evolve to publish those assets, and more, as well.
 9. Enter all the relevant configuration data, being sure to align with the name of your WebHook & the filters for the VSO Service Hook. 
 10. Click [OK], then [Create] and your webhook will be provisioned. 
 
-# Testing
+## Testing
 Once you've created the VSO Service & Runbook Web Hooks, you are now ready to start testing. 
 
 VSO provides a handy [Test] button on the New Service Hook window, which will light up once you drop in your WebHook URL. 
@@ -66,7 +66,7 @@ VSO provides a handy [Test] button on the New Service Hook window, which will li
 
 That's it!
 
-# Contributing
+## Contributing
 I have a lot of ideas for this project, but as I'm not sure how much time I'll actually have to spend on it, any input is gladly welcomed! 
 
 The Azure Automation team has been working on VSO integration for some time now, and once that is completed this may prove to be less useful. 
