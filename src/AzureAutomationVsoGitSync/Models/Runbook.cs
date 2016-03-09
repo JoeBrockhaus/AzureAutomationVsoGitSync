@@ -12,8 +12,10 @@ namespace AzureAutomationVsoGitSync.Models
 {
     public class Runbook
     {
-        public const string RUNBOOK_EXT_GRAPH = ".graphrunbook";
-        public const string RUNBOOK_EXT_PS = ".ps1";
+        private const string RUNBOOK_REF_NAME_REGEX_FMT = @"(^|{{|\.\\|\s+)({0})($|.ps1|\s+)";
+        private const string RUNBOOK_WF_NAME_REGEX_FMT = @"(^|\s+)(workflow\s+{0})($|\s+)";
+        private const string RUNBOOK_EXT_GRAPH = ".graphrunbook";
+        private const string RUNBOOK_EXT_PS = ".ps1";
 
         private SortedRunbookCollection _allRunbooks;
 
@@ -55,8 +57,8 @@ namespace AzureAutomationVsoGitSync.Models
                 else
                 {
                     var workflowDeclaration = File.ReadLines(this.FilePath)
-                        .TakeWhile(x => Regex.IsMatch(x, string.Format(@"workflow\s+{0}", Name), RegexOptions.IgnoreCase))
-                        //.Take(1)
+                        .SkipWhile(x => !Regex.IsMatch(x, string.Format(RUNBOOK_WF_NAME_REGEX_FMT, Name), RegexOptions.IgnoreCase))
+                        .Take(1)
                         ;
                     if (workflowDeclaration.Any())
                     {
@@ -92,7 +94,7 @@ namespace AzureAutomationVsoGitSync.Models
                 { /* todo: presumably not sufficient for all cases, but gets most of the way there. */
                     // match "name", " name", " name ", "name.ps1", ".\name.ps1"
                     // but not "myname", "test-name", "name-else"
-                    var regex = string.Format(@"(^|{{|\.\\|\s+)({0})($|.ps1|\s+)", name);
+                    var regex = string.Format(RUNBOOK_REF_NAME_REGEX_FMT, name);
                     return Regex.IsMatch(line, regex, RegexOptions.IgnoreCase | RegexOptions.Singleline);
                 });
 
