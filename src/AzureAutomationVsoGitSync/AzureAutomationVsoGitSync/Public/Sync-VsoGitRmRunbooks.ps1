@@ -204,53 +204,50 @@
 					# if not yet synced .. import & add to synced collection
 					if (!$haveSynced.ContainsKey($runbookName))
 					{
-						# if not yet synced .. import & add to synced collection
-						if (!$haveSynced.ContainsKey($runbookName))
+						Write-Verbose "Not yet synced"
+						if ($rbType -eq [AzureAutomationVsoGitSync.Models.RunbookType]::Graph)
 						{
-							Write-Verbose "Not yet synced"
-							if ($rbType -eq [RunbookType]::Graph)
-							{
-								Write-Verbose  "Importing $runbookName as Graph."
-								Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type Graph 
-							}
-							elseif ($rbType -eq [RunbookType]::PowerShellWorkflow)
-							{                                
-								Write-Verbose  "Importing $runbookName as PowerShellWorkflow."
-								Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShellWorkflow 
-							}
-							elseif ($rbType -eq [RunbookType]::PowerShell)
-							{
-								Write-Verbose  "Importing $runbookName as PowerShell."
-								Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShell 
-							}
-							else
-							{
-								throw "Could not determine type of runbook $($rb.FileName) from $rbType"
-							}
-                            
-							#Write-Verbose "Publishing.."
-							#$rb = Publish-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Name $runbookName -ErrorAction Continue | Write-Verbose
-                        
-							$haveSynced.Add($runbookName, $rb.FileUrl)
+							Write-Verbose  "Importing $runbookName as Graph."
+							Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type Graph 
+						}
+						elseif ($rbType -eq [AzureAutomationVsoGitSync.Models.RunbookType]::PowerShellWorkflow)
+						{                                
+							Write-Verbose  "Importing $runbookName as PowerShellWorkflow."
+							Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShellWorkflow 
+						}
+						elseif ($rbType -eq [AzureAutomationVsoGitSync.Models.RunbookType]::PowerShell)
+						{
+							Write-Verbose  "Importing $runbookName as PowerShell."
+							Import-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Path $outFile -Force -Published -Type PowerShell 
 						}
 						else
 						{
-							Write-Verbose("Runbook $runbookName already synced. Duplicate?")
+							throw "Could not determine type of runbook $($rb.FileName) from $rbType"
 						}
+                            
+						#Write-Verbose "Publishing.."
+						#$rb = Publish-AzureRmAutomationRunbook -ResourceGroupName $TargetResourceGroup -AutomationAccountName $TargetAutomationAccount -Name $runbookName -ErrorAction Continue | Write-Verbose
+                        
+						$haveSynced.Add($runbookName, $rb.FileUrl)
 					}
-					catch [System.Exception] 
+					else
 					{
-						$ex = ConvertTo-Json $_
-						if (!$errorSync.ContainsKey($runbookName))
-						{
-							$errorsync.add( $runbookname, $ex )
-						}
-						Write-Verbose $ex
-						Write-Error $_
+						Write-Verbose("Runbook $runbookName already synced. Duplicate?")
 					}
 				}
+				catch [System.Exception] 
+				{
+					$ex = ConvertTo-Json $_
+					if (!$errorSync.ContainsKey($runbookName))
+					{
+						$errorsync.add( $runbookname, $ex )
+					}
+					Write-Verbose $ex
+					Write-Error $_
+				}
+			}
 
-				Write-Verbose "Done.`n"
+			Write-Verbose "Done.`n"
                 
 			Write-Verbose "Synced $($haveSynced.Count) of $($sorted.Count)"
 			#Write-Verbose "Errors $($errorSync.Count)"
