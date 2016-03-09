@@ -10,7 +10,7 @@ Avoiding that folder structure also allows you to use the Azure Automation Power
 Ideally this tool could evolve to publish those assets, and more, as well.
 
 
-*[Import the Module into your Automation Account from PowerShell Gallery](https://www.powershellgallery.com/packages/AzureAutomationVsoGitSync)* 
+**[Import the Module into your Automation Account from PowerShell Gallery](https://www.powershellgallery.com/packages/AzureAutomationVsoGitSync)** 
 <br>
 ##Basics
 
