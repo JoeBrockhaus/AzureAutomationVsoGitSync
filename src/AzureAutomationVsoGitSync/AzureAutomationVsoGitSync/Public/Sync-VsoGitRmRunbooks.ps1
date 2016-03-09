@@ -204,7 +204,6 @@
 					# if not yet synced .. import & add to synced collection
 					if (!$haveSynced.ContainsKey($runbookName))
 					{
-						Write-Verbose "Not yet synced"
 						if ($rbType -eq [AzureAutomationVsoGitSync.Models.RunbookType]::Graph)
 						{
 							Write-Verbose  "Importing $runbookName as Graph."
