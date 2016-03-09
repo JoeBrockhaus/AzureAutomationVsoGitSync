@@ -111,7 +111,7 @@
 		$VerbosePreference = "Continue"
 		#$results | ConvertTo-Json | Write-Verbose
 	
-		$allRunbooks = [AzureAutomationVsoGitSync.Models.SortedRunbookDictionary]@{}
+		$allRunbooks = [AzureAutomationVsoGitSync.Models.SortedRunbookCollection]@{}
 
 		#grab folders & files
 		$folderObj = @()

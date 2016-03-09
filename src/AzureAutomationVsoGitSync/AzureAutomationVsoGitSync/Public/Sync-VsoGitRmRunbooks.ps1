@@ -134,7 +134,7 @@
 		$VerbosePreference = "Continue"
 		#$results | ConvertTo-Json | Write-Verbose
 
-		$allRunbooks = [AzureAutomationVsoGitSync.Models.SortedRunbookDictionary]@{}
+		$allRunbooks = [AzureAutomationVsoGitSync.Models.SortedRunbookCollection]@{}
 
 		#grab folders & files
 		$folderObj = @()
@@ -182,8 +182,9 @@
 			$sysDrive = $env:SystemDrive
 			#InlineScript
 			#{ 
-				# [SortedRunbookDictionary].Result will be the topologically-sorted list of runbooks
-				# (Leaf nodes first)
+			
+			# [SortedRunbookCollection].Result will be the topologically-sorted list of runbooks
+			# (Leaf nodes first)
             
 				$vsoApiVersion = $true
 

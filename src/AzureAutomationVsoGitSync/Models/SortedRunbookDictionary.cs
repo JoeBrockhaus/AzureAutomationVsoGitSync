@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AzureAutomationVsoGitSync.Models
 {
-    public class SortedRunbookDictionary
+    public class SortedRunbookCollection
     {
         private Dictionary<string, Runbook> _runbooks = new Dictionary<string, Runbook>();
 

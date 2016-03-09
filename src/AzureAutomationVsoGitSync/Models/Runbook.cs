@@ -15,9 +15,9 @@ namespace AzureAutomationVsoGitSync.Models
         public const string RUNBOOK_EXT_GRAPH = ".graphrunbook";
         public const string RUNBOOK_EXT_PS = ".ps1";
 
-        private SortedRunbookDictionary _allRunbooks;
+        private SortedRunbookCollection _allRunbooks;
 
-        public Runbook(SortedRunbookDictionary allRunbooks, string filePath, string fileUrl)
+        public Runbook(SortedRunbookCollection allRunbooks, string filePath, string fileUrl)
         {
             this._allRunbooks = allRunbooks;
             this.FilePath = filePath;
