@@ -8,7 +8,8 @@ This tool was inspired by the lack of well-rounded official tooling & the shortc
 Unlike the latter, this tool avoids the issue of having to use obtuse folder structures and needing to manually manage dependencies. 
 Avoiding that folder structure also allows you to use the Azure Automation PowerShell ISE Add-On for development and testing, as well as managing the rest of the Assets that the Add-On supports.
 Ideally this tool could evolve to publish those assets, and more, as well.
-<br>
+
+<br><br>
 *[Import the Module into your Automation Account from PowerShell Gallery](https://www.powershellgallery.com/packages/AzureAutomationVsoGitSync)* 
 <br>
 ##Basics
