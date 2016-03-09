@@ -28,7 +28,7 @@ namespace AzureAutomationVsoGitSync.Models
         }
 
         public Runbook SourceRunbook { get; private set; }
-        public Runbook TargetRunbook { get { return this._allRunbooks[this.TargetRunbookName]; } }
+        public Runbook TargetRunbook { get { return this._allRunbooks.Find(this.TargetRunbookName); } }
 
     }
 
