@@ -61,8 +61,7 @@ Ideally this tool could evolve to publish those assets, and more, as well.
 ## Testing
 Once you've created the VSO Service & Runbook Web Hooks, you are now ready to start testing. 
 
-VSO provides a handy [Test] button on the New Service Hook window, which will light up once you drop in your WebHook URL. 
-<br>Click it! Once the request is sent, you can pop back over to your Automation Account's Jobs Blade and you should see a job Kicked off with the parameters you specified on the WebHook, as well as the JSON-formatted WebHookData object from VSO with all the relevant details you chose to include in the POST data. 
+VSO provides a handy [Test] button on the New Service Hook window, which will light up once you drop in your WebHook URL. Click it! Once the request is sent, you can pop back over to your Automation Account's Jobs Blade and you should see a job Kicked off with the parameters you specified on the WebHook, as well as the JSON-formatted WebHookData object from VSO with all the relevant details you chose to include in the POST data. 
 
 That's it!
 
