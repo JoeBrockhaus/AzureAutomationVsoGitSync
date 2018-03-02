@@ -9,7 +9,7 @@ Ideally this tool could evolve to publish those assets, and more, as well.
 
 **[Import the Module into your Automation Account from PowerShell Gallery](https://www.powershellgallery.com/packages/AzureAutomationVsoGitSync)** 
 <br>
-##Basics
+## Basics
 
 ### There are 4 main components
 1. C# Models & Assembly
