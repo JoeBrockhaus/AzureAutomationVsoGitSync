@@ -32,9 +32,6 @@
 	.PARAMETER VSORunbookFolderPath
 		Project path to the root where the runbooks are located.  Ex. /Project1/ProjectRoot
 		where ProjectRoot contains the parent runbooks 
-    
-	.PARAMETER TargetSubscriptionId
-		The Id of the Azure Subscription where the Automation Assets will be deployed.
 
 	.PARAMETER TargetResourceGroup
 		Name of the Resource Group that contains the TargetAutomationAccount.
@@ -42,10 +39,6 @@
 	.PARAMETER TargetAutomationAccount
 		Name of the Automation Account to where the runbooks should be synced.
 
-	.PARAMETER TargetCredentialName
-		Name of the Azure Credential asset that was created in the Automation service.
-		This credential asset contains represents a user with permission to manage the TargetAutomationAccount.
-    
 	.PARAMETER VSOBranch
 		Optional name of the Git branch to retrieve the runbooks from.  Defaults to "master"
 
@@ -87,12 +80,6 @@
 
 		   [Parameter(Mandatory=$True)]
 		   [string] $VSORunbookFolderPath,
-
-		   [Parameter(Mandatory=$True)]
-		   [string] $TargetCredentialName,
-	   
-		   [Parameter(Mandatory=$True)]
-		   [string] $TargetSubscriptionId,
        
 		   [Parameter(Mandatory=$True)]
 		   [string] $TargetResourceGroup,
@@ -165,11 +152,38 @@
 			}
 		}
 		
+		# Get Azure Automation Assets
+		$adAppId = Get-AutomationVariable -Name "AutomationAppId"
+		$tenantId = Get-AutomationVariable -Name "AutomationTenantId"
+		$subscriptionId = Get-AutomationVariable -Name "AutomationSubscriptionId"
+		$cert = Get-AutomationCertificate -Name "AutomationCertificate"
+		$certThumbprint = ($cert.Thumbprint).ToString()
+
+		# Install Service Principal Certificate
+		Write-Output "Install Service Principal certificate…"
+		if ((Test-Path "Cert:\CurrentUser\My\$($certThumbprint)") -eq $false) {
+			InlineScript {
+				$certStore = new-object System.Security.Cryptography.X509Certificates.X509Store("My", "CurrentUser")
+				$certStore.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+				$certStore.Add($Using:cert)
+				$certStore.Close()
+			}
+		}
+
+		# Login to Azure
+		Write-Output "Login to Azure as Service Principal…"
+		Login-AzureRmAccount -ServicePrincipal -TenantId $tenantId -ApplicationId $adAppId -CertificateThumbprint $certThumbprint
+
+		# Select Azure Subscription
+		Write-Output "Select Azure subscription…"
+		Select-AzureRmSubscription -SubscriptionId $subscriptionId -TenantId $tenantId
+
+
 		# Select the Azure Subscription
-		$VerbosePreference = "SilentlyContinue"
-		$azCred = Get-AutomationPSCredential -Name $TargetCredentialName
-		$azAcct = Add-AzureRmAccount -Credential $azCred -SubscriptionId $TargetSubscriptionId
-		$azSub = Select-AzureRmSubscription -SubscriptionId $TargetSubscriptionId
+		#$VerbosePreference = "SilentlyContinue"
+		#$azCred = Get-AutomationPSCredential -Name $TargetCredentialName
+		#$azAcct = Add-AzureRmAccount -Credential $azCred -SubscriptionId $TargetSubscriptionId
+		#$azSub = Select-AzureRmSubscription -SubscriptionId $TargetSubscriptionId
 		$VerbosePreference = "Continue"
 
 		# enumerate existing automation accounts & runbooks

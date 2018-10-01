@@ -15,18 +15,12 @@
 
 		[Parameter(Mandatory=$True)]
 		[string] $VSORunbookFolderPath,
-	   
-		[Parameter(Mandatory=$True)]
-		[string] $TargetSubscriptionId,
        
 		[Parameter(Mandatory=$True)]
 		[string] $TargetResourceGroup,
 
 		[Parameter(Mandatory=$True)]
 		[string] $TargetAutomationAccount,
-
-		[Parameter(Mandatory=$True)]
-		[string] $TargetCredentialName,
 
 		[Parameter(Mandatory=$True)]
 		[string] $VSOBranch,
